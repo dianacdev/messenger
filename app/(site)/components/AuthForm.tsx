@@ -7,6 +7,8 @@ import {useCallback, useState} from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuthSocialButton from "./AuthSocialButton";
 import { FaGithub, FaGoogle, FaLinkedinIn} from 'react-icons/fa';
+import {toast} from 'react-hot-toast';
+import {signIn} from 'next-auth/react';
 
 
 type Variant = 'LOGIN' | 'REGISTER';
@@ -38,17 +40,38 @@ const AuthForm = () => {
         setIsLoading(true)
 
         if(variant === 'REGISTER'){
-            //**Making an Axios call to register route
+            //**Making an Axios call to register route, showing user toast error message when register route status fails.
             axios.post('/api/register', data)
+            .catch(() => toast.error('Something went wrong!') )
+            .finally(() => setIsLoading(false))
         }
         if(variant === 'LOGIN'){
-            //!TODO NextAuth SignIn
+            signIn('credentials',{...data,redirect:false})
+            .then((callback)=>{
+                if(callback?.error){
+                    toast.error('Invalid credentials!')
+                }
+                if(callback?.ok && !callback?.error){
+                    toast.success('Logged in!')
+                }
+            })
+            .finally(()=>setIsLoading(false))
         }
     }
 
     const socialAction = (action: string) =>{
         setIsLoading(true);
-        //!TODO NextAuth Social Sign In
+        
+        signIn(action,{redirect:false})
+        .then((callback)=>{
+            if(callback?.error){
+                toast.error('Invalid credentials!')
+            }
+            if(callback?.ok && !callback?.error){
+                toast.success('Logged in!')
+            }
+        })
+        .finally(()=>setIsLoading(false));
     }
 
     //The Form uses handleSubmit so it can pass the data to the onSubmit function above
