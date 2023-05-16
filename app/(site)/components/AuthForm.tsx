@@ -1,11 +1,13 @@
 'use client'; //Defining to Next.js that this is a client component not a server component!
 
+import axios from "axios";
 import Button from "@/app/components/Button";
 import Input from "@/app/components/inputs/Input";
 import {useCallback, useState} from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import AuthSocialButton from "./AuthSocialButton";
-import {FaGithub, FaGoogle} from 'react-icons/fa';
+import { FaGithub, FaGoogle, FaLinkedinIn} from 'react-icons/fa';
+
 
 type Variant = 'LOGIN' | 'REGISTER';
 
@@ -36,7 +38,8 @@ const AuthForm = () => {
         setIsLoading(true)
 
         if(variant === 'REGISTER'){
-            //!TODO Axios Register
+            //**Making an Axios call to register route
+            axios.post('/api/register', data)
         }
         if(variant === 'LOGIN'){
             //!TODO NextAuth SignIn
@@ -78,6 +81,7 @@ const AuthForm = () => {
                     <div className="mt-6 flex gap-2">
                         <AuthSocialButton icon={FaGithub} onClick={()=>socialAction('github')}/>
                         <AuthSocialButton icon={FaGoogle} onClick={()=>socialAction('google')}/>
+                        <AuthSocialButton icon={FaLinkedinIn} onClick={()=>socialAction('linkedin')}/>
                     </div>
                 </div>
                 <div className="flex gap-2 justify-center text-sm mt-6 px-2 text-gray-500">
